@@ -1,0 +1,8 @@
+users (pk: id, name)
+groups (pk: id, name, creator-id, created-at)
+group-members (pk: group-id, pk: member-id)
+document-types (pk: id, name)
+role (pk: id, name)
+documents (pk: id, name, created-at, creator-id, type-id)
+document-authorizations-group (pk: document-id, pk: group-id, role-id)
+document-authorizations-users (pk: document-id, pk: user-id, role-id)
