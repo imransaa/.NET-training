@@ -1,1 +1,1 @@
-This Repository is for Contour trainee developer with .NET Tech stack  
+This Repository is for Contour trainee software developer working on .NET Tech stack  
