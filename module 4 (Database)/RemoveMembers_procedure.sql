@@ -29,9 +29,6 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	if exists (select * from group_members where group_id = @group_id and member_id = @user_id)
-	begin
-		delete from group_members where group_id = @group_id and member_id = @user_id;
-	end
+	delete from group_members where group_id = @group_id and member_id = @user_id;
 END
 GO
