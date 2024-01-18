@@ -48,7 +48,8 @@ Begin
 		name varchar(255) not null,
 		created_at datetime default(getdate()),
 		creator_id int not null,
-		type_id int not null
+		type_id int not null,
+		constraint document_type foreign key(type_id) references dbo.document_types(id) on update cascade on delete cascade,
 	);
 End
 
