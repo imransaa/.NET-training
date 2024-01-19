@@ -65,15 +65,16 @@ End
 --document_auth_groups  Table
 if not exists (select * from INFORMATION_SCHEMA.TABLES where TABLE_NAME = 'document_auth_groups')
 Begin
-	Create table document_auth_groups(
-		document_id int not null,
-		group_id int not null,
-		role_id int not null,
-		primary key(document_id, group_id),
-		constraint group_auth_document foreign key(document_id) references dbo.documents(id) on update cascade on delete cascade,
-		constraint group_auth_group foreign key(group_id) references dbo.groups(id) on update cascade on delete cascade,
-		constraint group_auth_role foreign key(role_id) references dbo.roles(id) on update cascade on delete cascade,
-	);
+	CREATE TABLE document_auth_groups (
+    document_id INT NOT NULL,
+    group_id INT NOT NULL,
+    role_id INT NOT NULL,
+    PRIMARY KEY (document_id, group_id),
+    CONSTRAINT group_auth_document FOREIGN KEY (document_id) REFERENCES dbo.documents(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT group_auth_group FOREIGN KEY (group_id) REFERENCES dbo.groups(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT group_auth_role FOREIGN KEY (role_id) REFERENCES dbo.roles(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 End
 
 --document_auth_users Table
