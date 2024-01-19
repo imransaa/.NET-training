@@ -1,0 +1,13 @@
+Feature: Creating Documents
+
+Background: User has logged in to the app
+
+Scenario:
+    Given user is on the dashboard
+    And clicks the create document button
+    Then a popup should be displayed
+    And the user user enters document name
+    And then user selects the document type
+    And the user clicks on create button
+    Then the document should be created
+    And the user should be redirected to the document

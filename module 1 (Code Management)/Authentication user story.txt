@@ -1,0 +1,12 @@
+Feature: Authentication
+
+Background: User is already registered to the app
+
+Scenario:
+    Given user is on the login page
+    When user enters correct email address
+    And user enters correct password
+    And clicks the login button
+    Then user is authenticated
+    And a success message should be displayed
+    And the user is redirected to the dashboard

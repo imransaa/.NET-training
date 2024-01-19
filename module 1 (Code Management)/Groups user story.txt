@@ -1,0 +1,13 @@
+Feature: Groups
+
+Background: User has logged in to the app
+
+Scenario:
+    Given user is on the groups page
+    And user can see all the groups created by user
+    And user clicks the create group button
+    Then a popup should be displayed
+    And the user user enters group name
+    And the user clicks on create button
+    Then the group should be created
+    And list of groups on groups page displays the created group

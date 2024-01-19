@@ -1,0 +1,17 @@
+Feature: Sharing documents
+
+Background: 
+    User has logged in to the app
+
+Scenario:
+    Given user has openned the document to be shared
+    And user clicks on share button
+    Then a popup should be displayed
+    And the user can enter the group name
+    Or the user can enter the user name
+    And user selects the permissions
+    And clicks on the share button
+    Then the document is shared to the group Or user
+    And popup disappears
+    And a success message is displayed
+    And a notification sent to users the document is shared with 
