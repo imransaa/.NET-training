@@ -6,7 +6,7 @@ namespace module2
         {
             if (a == null || b == null)
             {
-                throw new Exception("Arguments Cant be Null");
+                throw new ArgumentNullException("Arguments Cant be Null");
             }
 
             dynamic dynamicA = a;
@@ -19,11 +19,11 @@ namespace module2
         {
             if (a == null || b == null)
             {
-                throw new Exception("Arguments Cant be Null");
+                throw new ArgumentNullException("Arguments Cant be Null");
             }
 
             if(typeof(T) != typeof(int) && typeof(T) != typeof(float) && typeof(T) != typeof(decimal) && typeof(T) != typeof(long) && typeof(T) != typeof(double)){
-                throw new Exception("Subtract can not work for this data type");
+                throw new ArgumentException("Subtract can not work for this data type");
             }
 
             dynamic dynamicA = a;

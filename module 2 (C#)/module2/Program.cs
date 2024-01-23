@@ -73,7 +73,7 @@ internal class Program
         System.Console.WriteLine(@"Generic Double Subtract : {0}", calDouble.Subtract(20.25, 20));
 
         CalculatorGeneric<string> calString = new CalculatorGeneric<string>();
-        System.Console.WriteLine(@"Generic String Add: {0}", calString.Add("Hello", "World"));
+        System.Console.WriteLine(@"Generic String Add: {0}", calString.Add("Hello ", "World"));
         // System.Console.WriteLine(@"Generic String Subtract: {0}", calString.Subtract("Hello", "World"));
 
         // Collection
