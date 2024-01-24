@@ -138,25 +138,56 @@ begin
 	insert into document_auth_groups values(1, 1, 2);
 end
 
-select * from INFORMATION_SCHEMA.TABLES;
+--select * from INFORMATION_SCHEMA.TABLES;
 
-select * from roles;
+--select * from roles;
 
-select * from users;
+--select * from users;
 
-select * from groups;
+--select * from groups;
 
-select u.name as 'user', g.name as 'group', g.created_at from group_members gm 
-inner join groups g on gm.group_id = g.id 
-inner join users u on u.id = gm.member_id;
+--select u.name as 'user', g.name as 'group', g.created_at from group_members gm 
+--inner join groups g on gm.group_id = g.id 
+--inner join users u on u.id = gm.member_id;
 
-select * from document_types;
+--select * from document_types;
 
-select d.id , d.name as 'document', u.name as 'creator', dt.type from documents d
-inner join users u on u.id = d.creator_id
-inner join document_types dt on dt.id = d.type_id;
+--select d.id , d.name as 'document', u.name as 'creator', dt.type from documents d
+--inner join users u on u.id = d.creator_id
+--inner join document_types dt on dt.id = d.type_id;
 
-select d.id, d.name as 'document', g.name as 'group', r.role  from document_auth_groups dg
-inner join documents d on d.id = dg.document_id
-inner join groups g on g.id = dg.group_id
-inner join roles r on r.id = dg.role_id;
+--select d.id, d.name as 'document', g.name as 'group', r.role  from document_auth_groups dg
+--inner join documents d on d.id = dg.document_id
+--inner join groups g on g.id = dg.group_id
+--inner join roles r on r.id = dg.role_id;
+
+--Documents and thier no. of authorizations
+select main.name, isnull(sub.Authorizations, 0) as Authorizations from documents main 
+left join (
+	select d.id as id, count(d.id) as Authorizations from documents d 
+	inner join document_auth_groups dg on d.id = dg.document_id
+	inner join document_auth_users du on d.id = du.document_id
+	group by d.id
+) sub on main.id = sub.id;
+
+
+--Document with most Authorization
+select * from documents
+where id in (
+	select top 1 d.id from documents d 
+	inner join document_auth_groups dg on d.id = dg.document_id
+	inner join document_auth_users du on d.id = du.document_id
+	group by d.id
+	order by count(d.id) desc
+);
+
+--Mostly used document type
+select dt.type, count(dt.type) as Number_of_docs from document_types dt 
+inner join documents d on d.type_id = dt.id
+group by dt.type
+having count(dt.type) = (
+	select max(sub.c) from (
+		select count(dt.type) as c from document_types dt inner join documents d on d.type_id = dt.id group by dt.type
+	) as sub
+)
+order by dt.type;
