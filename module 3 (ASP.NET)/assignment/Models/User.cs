@@ -17,7 +17,7 @@ namespace assignment.Models
 
         [Required(ErrorMessage = "Email is a Required feild")]
         [MinLength(3, ErrorMessage = "Minimumm 3 Characters are required")]
-        [RegularExpression("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", ErrorMessage ="Invalid email address")]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Required(ErrorMessage ="Hashed Password is requried")]

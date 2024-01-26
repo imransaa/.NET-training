@@ -1,13 +1,14 @@
 ﻿using assignment.Models;
+using assignment.Data.Interfaces;
 
 namespace assignment.Data
 {
-    public class UnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private AppDbContext _context;
 
-        public GenericRepository<User> UserRepository { get; }
-        public GenericRepository<Group> GroupRepository { get; }
+        public UserRepository UserRepository { get; }
+        public GroupRepository GroupRepository { get; }
         public GenericRepository<Document> DocumentRepository { get; }
         public GenericRepository<DocumentType> DocumentTypeRepository { get; }
         public GenericRepository<GroupAuthorization> GroupAuthorizationRepository { get; }
@@ -17,8 +18,8 @@ namespace assignment.Data
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
-            UserRepository = new GenericRepository<User>(context);
-            GroupRepository = new GenericRepository<Group>(context);
+            UserRepository = new UserRepository(context);
+            GroupRepository = new GroupRepository(context);
             DocumentRepository = new GenericRepository<Document>(context);
             DocumentTypeRepository = new GenericRepository<DocumentType>(context);
             GroupAuthorizationRepository = new GenericRepository<GroupAuthorization>(context);

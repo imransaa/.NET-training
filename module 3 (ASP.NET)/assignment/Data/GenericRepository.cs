@@ -5,7 +5,7 @@ namespace assignment.Data
     public class GenericRepository<TEntity> where TEntity : class
     {
         private AppDbContext _context;
-        private DbSet<TEntity> _dbSet;
+        protected DbSet<TEntity> _dbSet;
 
         public GenericRepository(AppDbContext context)
         {

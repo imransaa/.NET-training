@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace assignment.Models
 {
@@ -15,7 +17,7 @@ namespace assignment.Models
         [RegularExpression("^[A-Za-z]+(?: [A-Za-z]+)*$", ErrorMessage = "Use only Characters")]
         public string Name { get; set; }
 
-        [DefaultValue("getdate()")]
+        [DefaultValue("now()")]
         public DateTime CreatedAt { get; set; }
 
         // One-To-Many Relations

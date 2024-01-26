@@ -1,0 +1,12 @@
+User:
+    ___D
+    signin with jwts
+    signup
+Group:
+    CRUD
+    Add member
+    Remove member
+Document:
+    CRUD
+    Add user Auth
+    Add group Auth
