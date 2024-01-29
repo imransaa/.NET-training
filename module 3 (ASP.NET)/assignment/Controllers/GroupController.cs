@@ -123,6 +123,11 @@ namespace assignment.Controllers
                         return BadRequest("Group Doesn't exist");
                     }
 
+                    if (group.CreatorId != creatorId)
+                    {
+                        return Unauthorized();
+                    }
+
                     List<User> users = new List<User>();
 
                     foreach (var email in members.Emails)
@@ -161,53 +166,47 @@ namespace assignment.Controllers
         }
 
         // DELETE api/<ValuesController>/member/10
-        [HttpDelete("member/{id}")]
+        [HttpDelete("member/{id}/{email}")]
         [Authorize]
-        public IActionResult RemoveMembers(int id, [FromBody] GroupMemberDto members)
+        public IActionResult RemoveMembers(int id, string email)
         {
-            using(var transaction = _unitOfWork.GetTransasction())
+            try
             {
-                try
+                int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+
+                Group group = _unitOfWork.GroupRepository.GetById(id);
+
+                if (group == null)
                 {
-                    int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-
-                    Group group = _unitOfWork.GroupRepository.GetById(id);
-
-                    if (group == null)
-                    {
-                        return BadRequest("Group Doesn't exist");
-                    }
-
-                    List<User> users = new List<User>();
-
-                    foreach (var email in members.Emails)
-                    {
-                        User user = _unitOfWork.UserRepository.GetUserByEmail(email);
-                        if (user == null)
-                        {
-                            return NotFound($"User with email {email} not found");
-                        }
-                        else
-                        {
-                            users.Add(user);
-                        }
-                    }
-
-                    foreach (var user in users)
-                    {
-                        _unitOfWork.GroupRepository.RemoveMembers(id, user);
-                    }
-                    _unitOfWork.Save();
-
-                    transaction.Commit();
-                    return Ok();
+                    return BadRequest("Group Doesn't exist");
                 }
-                catch (Exception ex)
+
+                if (group.CreatorId != creatorId)
                 {
-                    transaction.Rollback();
-                    Console.WriteLine(ex.Message);
-                    return StatusCode(500, "Internal Server Error");
+                    return Unauthorized();
                 }
+
+                User user = _unitOfWork.UserRepository.GetUserByEmail(email);
+                
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                if(user.Id == creatorId)
+                {
+                    return BadRequest("Can't remove group creator from group");  
+                }
+
+                _unitOfWork.GroupRepository.RemoveMembers(id, user);
+                _unitOfWork.Save();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, "Internal Server Error");
             }
         }
 

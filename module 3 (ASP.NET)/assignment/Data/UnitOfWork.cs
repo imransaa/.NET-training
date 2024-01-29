@@ -11,10 +11,10 @@ namespace assignment.Data
         public UserRepository UserRepository { get; }
         public GroupRepository GroupRepository { get; }
         public GenericRepository<Document> DocumentRepository { get; }
-        public GenericRepository<DocumentType> DocumentTypeRepository { get; }
+        public DocumentTypeRepository DocumentTypeRepository { get; }
         public GenericRepository<GroupAuthorization> GroupAuthorizationRepository { get; }
         public GenericRepository<UserAuthorization> UserAuthorizationRepository { get; }
-        public GenericRepository<AuthorizationRole> AuthorizationRoleRepository { get; }
+        public AuthorizationRoleRepository AuthorizationRoleRepository { get; }
 
         public UnitOfWork(AppDbContext context)
         {
@@ -22,10 +22,10 @@ namespace assignment.Data
             UserRepository = new UserRepository(context);
             GroupRepository = new GroupRepository(context);
             DocumentRepository = new GenericRepository<Document>(context);
-            DocumentTypeRepository = new GenericRepository<DocumentType>(context);
+            DocumentTypeRepository = new DocumentTypeRepository(context);
             GroupAuthorizationRepository = new GenericRepository<GroupAuthorization>(context);
             UserAuthorizationRepository = new GenericRepository<UserAuthorization>(context);
-            AuthorizationRoleRepository = new GenericRepository<AuthorizationRole>(context);
+            AuthorizationRoleRepository = new AuthorizationRoleRepository(context);
         }
 
         public virtual void Save()

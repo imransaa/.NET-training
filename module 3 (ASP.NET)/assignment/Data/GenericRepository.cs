@@ -36,7 +36,10 @@ namespace assignment.Data
         public virtual void Delete(int id)
         {
             TEntity entity = GetById(id);
-            Delete(entity);
+            if(entity != null)
+            {
+                Delete(entity);
+            }
         }
 
         public virtual void Delete(TEntity entity)
