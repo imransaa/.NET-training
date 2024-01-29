@@ -2,6 +2,7 @@
 using assignment.Dto;
 using assignment.Models;
 using AutoMapper;
+using AutoMapper.Execution;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
@@ -109,69 +110,104 @@ namespace assignment.Controllers
         [Authorize]
         public IActionResult AddMembers(int id, [FromBody] GroupMemberDto members)
         {
-            try
+            using (var transaction = _unitOfWork.GetTransasction())
             {
-                int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-
-                Group group = _unitOfWork.GroupRepository.GetById(id);
-
-                if (group == null)
+                try
                 {
-                    return BadRequest("Group Doesn't exist");
-                }
+                    int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
-                List<User> users = new List<User>();
+                    Group group = _unitOfWork.GroupRepository.GetById(id);
 
-                foreach (var email in members.Emails)
-                {
-                    User user = _unitOfWork.UserRepository.GetUserByEmail(email);
-                    if (user == null)
+                    if (group == null)
                     {
-                        return NotFound($"User with email {email} not found");
+                        return BadRequest("Group Doesn't exist");
                     }
-                    else
+
+                    List<User> users = new List<User>();
+
+                    foreach (var email in members.Emails)
                     {
-                        users.Add(user);
+                        User user = _unitOfWork.UserRepository.GetUserByEmail(email);
+                        if (user == null)
+                        {
+                            return NotFound($"User with email {email} not found");
+                        }
+                        else if (user.Id == creatorId)
+                        {
+                            return BadRequest("Can't add group creator to group");
+                        }
+                        else
+                        {
+                            users.Add(user);
+                        }
                     }
-                }
 
-                foreach (var user in users)
+                    foreach (var user in users)
+                    {
+                        _unitOfWork.GroupRepository.AddMembers(id, user);
+                    }
+                    _unitOfWork.Save();
+
+                    transaction.Commit();
+                    return Ok();
+                }
+                catch (Exception ex)
                 {
-                    _unitOfWork.GroupRepository.AddMembers(id, user);
+                    transaction.Rollback();
+                    Console.WriteLine(ex.Message);
+                    return StatusCode(500, "Internal Server Error");
                 }
-                _unitOfWork.Save();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
             }
         }
 
         // DELETE api/<ValuesController>/member/10
         [HttpDelete("member/{id}")]
         [Authorize]
-        public IActionResult RemoveMembers(int id, [FromBody] GroupMemberDto email)
+        public IActionResult RemoveMembers(int id, [FromBody] GroupMemberDto members)
         {
-            try
+            using(var transaction = _unitOfWork.GetTransasction())
             {
-                int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-
-                Group group = _unitOfWork.GroupRepository.GetById(id);
-
-                if (group == null)
+                try
                 {
-                    return BadRequest("Group Doesn't exist");
-                }
+                    int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                    Group group = _unitOfWork.GroupRepository.GetById(id);
+
+                    if (group == null)
+                    {
+                        return BadRequest("Group Doesn't exist");
+                    }
+
+                    List<User> users = new List<User>();
+
+                    foreach (var email in members.Emails)
+                    {
+                        User user = _unitOfWork.UserRepository.GetUserByEmail(email);
+                        if (user == null)
+                        {
+                            return NotFound($"User with email {email} not found");
+                        }
+                        else
+                        {
+                            users.Add(user);
+                        }
+                    }
+
+                    foreach (var user in users)
+                    {
+                        _unitOfWork.GroupRepository.RemoveMembers(id, user);
+                    }
+                    _unitOfWork.Save();
+
+                    transaction.Commit();
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    Console.WriteLine(ex.Message);
+                    return StatusCode(500, "Internal Server Error");
+                }
             }
         }
 

@@ -9,6 +9,7 @@ namespace assignment.Profiles
         public UserProfile() 
         {
             CreateMap<SignupDto, User>();
+            CreateMap<User, GroupUserDto>();
         }
     }
 }

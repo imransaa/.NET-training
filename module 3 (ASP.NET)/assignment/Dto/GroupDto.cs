@@ -27,6 +27,19 @@ namespace assignment.Dto
         public DateTime CreatedAt { get; set; }
     }
 
+    public class GroupUserDto
+    {
+        [Required(ErrorMessage = "Name is a Required feild")]
+        [StringLength(250, MinimumLength = 3, ErrorMessage = "Minimumm 3 Characters are required")]
+        [RegularExpression("^[A-Za-z]+(?: [A-Za-z]+)*$", ErrorMessage = "Use only Characters")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Email is a Required feild")]
+        [MinLength(3, ErrorMessage = "Minimumm 3 Characters are required")]
+        [EmailAddress]
+        public string Email { get; set; }
+    }
+
     public class GroupMembersDto
     {
         [Key]
@@ -40,7 +53,7 @@ namespace assignment.Dto
 
         public DateTime CreatedAt { get; set; }
 
-        public ICollection<User> Users { get; set; }
+        public ICollection<GroupUserDto> Users { get; set; }
     }
 
     public class GroupMemberDto

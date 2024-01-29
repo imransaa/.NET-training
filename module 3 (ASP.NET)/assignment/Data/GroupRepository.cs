@@ -33,12 +33,28 @@ namespace assignment.Data
         }
         public void AddMembers(int id, User user)
         {
-            _dbSet.Find(id).Users.Add(user);
+            Group group = _dbSet.Include(x => x.Users).FirstOrDefault(x=> x.Id == id);
+
+            if(group != null)
+            {
+                Console.WriteLine("Adding member to Group ");
+                group.Users.Add(user);
+            }
+
+            _dbSet.Update(group);
         }
 
         public void RemoveMembers(int id, User user)
         {
-            throw new NotImplementedException();
+            Group group = _dbSet.Include(x => x.Users).FirstOrDefault(x => x.Id == id);
+
+            if (group != null)
+            {
+                Console.WriteLine("Adding member to Group ");
+                group.Users.Remove(user);
+            }
+
+            _dbSet.Update(group);
         }
     }
 }

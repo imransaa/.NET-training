@@ -1,5 +1,6 @@
 ﻿using assignment.Models;
 using assignment.Data.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace assignment.Data
 {
@@ -30,6 +31,11 @@ namespace assignment.Data
         public virtual void Save()
         {
             _context.SaveChanges();
+        }
+
+        public virtual IDbContextTransaction GetTransasction()
+        {
+            return _context.Database.BeginTransaction();
         }
     }
 }
