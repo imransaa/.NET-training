@@ -2,7 +2,7 @@
 
 namespace assignment.Data.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserRepository : IGenericRepository<User>
     {
         User GetUserByEmail(string email);
     }

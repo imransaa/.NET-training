@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using assignment.Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Linq.Expressions;
 
 namespace assignment.Data
 {
-    public class GenericRepository<TEntity> where TEntity : class
+    public abstract class GenericRepository<TEntity> : IGenericRepository<TEntity>  where TEntity : class
     {
         private AppDbContext _context;
         protected DbSet<TEntity> _dbSet;
@@ -13,42 +16,54 @@ namespace assignment.Data
             _dbSet = context.Set<TEntity>();
         }
 
-        public virtual IEnumerable<TEntity> GetAll()
+        public virtual IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>>? filter = null, string? include = null)
         {
-            return _dbSet.ToList();
+            IQueryable<TEntity> query = _dbSet;
+
+            if(filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if(include != null)
+            {
+                foreach (var property in include.Split(',', StringSplitOptions.RemoveEmptyEntries)) 
+                {
+                    query = query.Include(property);
+                }
+            }
+
+            return query.ToList();
         }
 
-        public TEntity GetById(int id)
+        public virtual TEntity Get(int id)
         {
             return _dbSet.Find(id);
         }
 
-        public virtual void Add(TEntity entity)
+        public virtual EntityEntry<TEntity> Add(TEntity entity)
         {
-            _dbSet.Add(entity);
+            return _dbSet.Add(entity);
         }
 
-        public virtual void Update(TEntity entity)
+        public virtual EntityEntry<TEntity> Update(TEntity entity)
         {
-            _dbSet.Update(entity);
+            return _dbSet.Update(entity);
         }
 
-        public virtual void Delete(int id)
+        public virtual EntityEntry<TEntity> Delete(int id)
         {
-            TEntity entity = GetById(id);
-            if(entity != null)
-            {
-                Delete(entity);
-            }
+            TEntity entity = Get(id);
+            return Delete(entity);
         }
 
-        public virtual void Delete(TEntity entity)
+        public virtual EntityEntry<TEntity> Delete(TEntity entity)
         {
             if(_context.Entry(entity).State == EntityState.Detached)
             {
                 _dbSet.Attach(entity);
             }
-            _dbSet.Remove(entity);
+            return _dbSet.Remove(entity);
         }
     }
 }

@@ -8,29 +8,37 @@ namespace assignment.Data
     {
         private AppDbContext _context;
 
-        public UserRepository UserRepository { get; }
-        public GroupRepository GroupRepository { get; }
-        public GenericRepository<Document> DocumentRepository { get; }
-        public DocumentTypeRepository DocumentTypeRepository { get; }
-        public GenericRepository<GroupAuthorization> GroupAuthorizationRepository { get; }
-        public GenericRepository<UserAuthorization> UserAuthorizationRepository { get; }
-        public AuthorizationRoleRepository AuthorizationRoleRepository { get; }
+        public IUserRepository UserRepository { get; }
+        public IGroupRepository GroupRepository { get; }
+        public IDocumentRepository DocumentRepository { get; }
+        public IDocumentTypeRepository DocumentTypeRepository { get; }
+        public IGroupAuthorizationRepository GroupAuthorizationRepository { get; }
+        public IUserAuthorizationRepository UserAuthorizationRepository { get; }
+        public IAuthorizationRoleRepository AuthorizationRoleRepository { get; }
 
-        public UnitOfWork(AppDbContext context)
+        public UnitOfWork(
+            AppDbContext context, 
+            IUserRepository userRepository, 
+            IGroupRepository groupRepository, 
+            IDocumentRepository documentRepository, 
+            IDocumentTypeRepository documentTypeRepository,
+            IGroupAuthorizationRepository groupAuthorizationRepository,
+            IUserAuthorizationRepository userAuthorizationRepository,
+            IAuthorizationRoleRepository authorizationRoleRepository)
         {
             _context = context;
-            UserRepository = new UserRepository(context);
-            GroupRepository = new GroupRepository(context);
-            DocumentRepository = new GenericRepository<Document>(context);
-            DocumentTypeRepository = new DocumentTypeRepository(context);
-            GroupAuthorizationRepository = new GenericRepository<GroupAuthorization>(context);
-            UserAuthorizationRepository = new GenericRepository<UserAuthorization>(context);
-            AuthorizationRoleRepository = new AuthorizationRoleRepository(context);
+            UserRepository = userRepository;
+            GroupRepository = groupRepository;
+            DocumentRepository = documentRepository;
+            DocumentTypeRepository = documentTypeRepository;
+            GroupAuthorizationRepository = groupAuthorizationRepository;
+            UserAuthorizationRepository = userAuthorizationRepository;
+            AuthorizationRoleRepository = authorizationRoleRepository;
         }
 
-        public virtual void Save()
+        public virtual int Save()
         {
-            _context.SaveChanges();
+            return _context.SaveChanges();
         }
 
         public virtual IDbContextTransaction GetTransasction()

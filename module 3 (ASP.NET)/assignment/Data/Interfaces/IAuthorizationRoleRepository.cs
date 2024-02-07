@@ -2,7 +2,7 @@
 
 namespace assignment.Data.Interfaces
 {
-    public interface IAuthorizationRoleRepository
+    public interface IAuthorizationRoleRepository : IGenericRepository<AuthorizationRole>
     {
         AuthorizationRole GetRole(string role);  
     }

@@ -27,6 +27,6 @@ namespace assignment.Models
 
         // Many-To-Many Relations
         public ICollection<User> Users { get; set; }
-        public ICollection<GroupAuthorization> GroupAuthorizations { get; set; }
+        public ICollection<GroupAuthorization>? GroupAuthorizations { get; set; }
     }
 }

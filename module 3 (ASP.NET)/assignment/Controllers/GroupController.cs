@@ -53,7 +53,7 @@ namespace assignment.Controllers
             {
                 int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
-                Group group = _unitOfWork.GroupRepository.GetGroupWithMembers(id);
+                Group group = _unitOfWork.GroupRepository.GetGroupDetails(id);
 
                 if (group == null)
                 {
@@ -116,7 +116,7 @@ namespace assignment.Controllers
                 {
                     int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
-                    Group group = _unitOfWork.GroupRepository.GetById(id);
+                    Group group = _unitOfWork.GroupRepository.Get(id);
 
                     if (group == null)
                     {
@@ -174,7 +174,7 @@ namespace assignment.Controllers
             {
                 int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
-                Group group = _unitOfWork.GroupRepository.GetById(id);
+                Group group = _unitOfWork.GroupRepository.Get(id);
 
                 if (group == null)
                 {
@@ -219,7 +219,7 @@ namespace assignment.Controllers
             {
                 int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
 
-                Group group = _unitOfWork.GroupRepository.GetById(id);
+                Group group = _unitOfWork.GroupRepository.Get(id);
 
                 if (group == null)
                 {

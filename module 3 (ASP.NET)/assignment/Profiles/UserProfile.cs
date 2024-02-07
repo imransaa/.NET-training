@@ -10,6 +10,8 @@ namespace assignment.Profiles
         {
             CreateMap<SignupDto, User>();
             CreateMap<User, GroupUserDto>();
+            CreateMap<User, UserDto>();
+            CreateMap<UserDto, User>();
         }
     }
 }

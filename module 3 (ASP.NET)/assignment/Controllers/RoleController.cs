@@ -28,7 +28,7 @@ namespace assignment.Controllers
         {
             try
             {
-                var roles = _unitOfWork.AuthorizationRoleRepository.GetAll();
+                var roles = _unitOfWork.AuthorizationRoleRepository.Get();
                 var roleDto = _mapper.Map<IEnumerable<RoleDto>>(roles);
 
                 return Ok(roleDto);

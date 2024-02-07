@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using assignment.Data.Interfaces;
+using assignment.Services.Interfaces;
+using assignment.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,9 +22,6 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
@@ -33,7 +32,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 builder.Services.AddDbContext<AppDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")));
 
-builder.Services.AddScoped<UnitOfWork>();
+// Unit Of Work and repository DI
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAuthorizationRoleRepository, AuthorizationRoleRepository>();
+builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddScoped<IDocumentTypeRepository, DocumentTypeRepository>();
+builder.Services.AddScoped<IGroupAuthorizationRepository, GroupAuthorizationReposository>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IUserAuthorizationRepository, UserAuthorizationRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Service DI
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();    
 
 builder.Services.AddControllers();
 

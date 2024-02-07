@@ -30,7 +30,7 @@ namespace assignment.Controllers
         {
             try
             {
-                var types = _unitOfWork.DocumentTypeRepository.GetAll();
+                var types = _unitOfWork.DocumentTypeRepository.Get();
                 var typeDto = _mapper.Map<IEnumerable<TypeDto>> (types);
 
                 return Ok(typeDto);

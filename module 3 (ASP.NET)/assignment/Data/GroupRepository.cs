@@ -11,7 +11,7 @@ namespace assignment.Data
 
         }
 
-        public Group GetGroupWithMembers(int id)
+        public Group GetGroupDetails(int id)
         {
             return _dbSet
                 .Include(x => x.Users)
@@ -31,13 +31,13 @@ namespace assignment.Data
                 .OrderBy(x => x.CreatedAt)
                 .ToList();
         }
+
         public void AddMembers(int id, User user)
         {
             Group group = _dbSet.Include(x => x.Users).FirstOrDefault(x=> x.Id == id);
 
             if(group != null)
             {
-                Console.WriteLine("Adding member to Group ");
                 group.Users.Add(user);
             }
 
@@ -50,11 +50,17 @@ namespace assignment.Data
 
             if (group != null)
             {
-                Console.WriteLine("Adding member to Group ");
                 group.Users.Remove(user);
             }
 
             _dbSet.Update(group);
+        }
+
+        public IEnumerable<Group> GetGroupWithMember(int id)
+        {
+            return _dbSet
+                .Include(x => x.Users)
+                .Where(x => x.Users.Where(y => y.Id == id).Any());
         }
     }
 }

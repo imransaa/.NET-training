@@ -2,11 +2,12 @@
 
 namespace assignment.Data.Interfaces
 {
-    public interface IGroupRepository
+    public interface IGroupRepository : IGenericRepository<Group>
     {
         IEnumerable<Group> GetUserGroups(int id);
+        IEnumerable<Group> GetGroupWithMember(int id);
         Group GetGroupWithName(int id, string name);
-        Group GetGroupWithMembers(int id);
+        Group GetGroupDetails(int id);
         void AddMembers(int id, User user);
         void RemoveMembers(int id, User user);
     }
