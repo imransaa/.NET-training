@@ -1,17 +1,8 @@
-﻿using assignment.Data;
-using assignment.Data.Interfaces;
-using assignment.Dto;
-using assignment.Models;
+﻿using assignment.Dto;
 using assignment.Services.Interfaces;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

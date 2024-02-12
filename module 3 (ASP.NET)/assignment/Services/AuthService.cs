@@ -52,6 +52,7 @@ namespace assignment.Services
             return Convert.ToHexString(hash);
         }
 
+
         public bool VerifyPassword(string password, string hash, string salt)
         {
             byte[] byteSalt = StringToByteArray(salt);

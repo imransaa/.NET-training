@@ -6,6 +6,6 @@ namespace assignment.Services.Interfaces
     public interface IUserService : IGenericService<User, UserDto>
     {
         TokenDto Signin(SigninDto signin);
-        UserDto Signup(SignupDto signup); 
+        UserDto Signup(SignupDto signup);
     }
 }
