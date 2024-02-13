@@ -1,96 +1,54 @@
-﻿using assignment.Data;
+﻿using assignment.Controllers.Interfaces;
 using assignment.Dto;
 using assignment.Models;
-using AutoMapper;
+using assignment.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace assignment.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class RoleController : RestController<AuthorizationRole, RoleDto>, IRoleController
     {
-        private UnitOfWork _unitOfWork;
-        private IMapper _mapper;
+        private readonly IRoleService _service;
 
-        public RoleController(UnitOfWork unitOfWork, IMapper mapper)
+        public RoleController(IRoleService service) : base(service)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _service = service;
         }
 
-        // GET: api/<RoleController>
-        [HttpGet]
-        [Authorize]
-        public IActionResult Get()
+        [NonAction]
+        public override async Task<IActionResult> Get(int id)
         {
-            try
-            {
-                var roles = _unitOfWork.AuthorizationRoleRepository.Get();
-                var roleDto = _mapper.Map<IEnumerable<RoleDto>>(roles);
-
-                return Ok(roleDto);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
-            }
+            return await base.Get(id);
         }
 
-        // POST api/<RoleController>
-        [HttpPost]
-        [Authorize]
-        public IActionResult Post([FromBody] RoleDto roleDto)
+        [NonAction]
+        public override async Task<IActionResult> Put(int id, RoleDto request)
         {
-            try
-            {
-                AuthorizationRole role = _unitOfWork.AuthorizationRoleRepository.GetRole(roleDto.Role);
-
-                if (role != null)
-                {
-                    return BadRequest("Role already exits");
-                }
-
-                role = _mapper.Map<AuthorizationRole>(roleDto);
-
-                _unitOfWork.AuthorizationRoleRepository.Add(role);
-                _unitOfWork.Save();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
-            }
+            return await base.Put(id, request);
         }
 
-        // DELETE api/<RoleController>/5
+        [NonAction]
+        public override async Task<IActionResult> Delete(int id)
+        {
+            return await base.Delete(id);
+        }
+
         [HttpDelete("{roleName}")]
         [Authorize]
-        public IActionResult Delete([FromRoute] string roleName)
+        public async Task<IActionResult> Delete(string roleName)
         {
             try
             {
-                AuthorizationRole role = _unitOfWork.AuthorizationRoleRepository.GetRole(roleName);
-
-                if (role == null)
-                {
-                    return BadRequest("Role does not exit");
-                }
-
-                _unitOfWork.AuthorizationRoleRepository.Delete(role);
-                _unitOfWork.Save();
-
-                return Ok();
+                var response = _service.Delete(roleName);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                return InternalServerError();
             }
         }
     }

@@ -41,6 +41,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Service DI
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IAuthService, AuthService>();    
 
 builder.Services.AddControllers();

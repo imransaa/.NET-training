@@ -13,11 +13,11 @@ namespace assignment.Services
         private readonly IUserRepository _repository;
         private readonly IAuthService _authService;
 
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IAuthService authService) : base(unitOfWork, unitOfWork.UserRepository, mapper)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, IAuthService authService, IUserRepository repository) : base(unitOfWork, repository, mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _repository = unitOfWork.UserRepository;
+            _repository = repository;
             _authService = authService;
         }
 

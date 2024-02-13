@@ -1,11 +1,9 @@
-﻿using assignment.Data;
+﻿using assignment.Controllers.Interfaces;
 using assignment.Dto;
 using assignment.Models;
-using AutoMapper;
-using AutoMapper.Execution;
+using assignment.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,232 +12,149 @@ namespace assignment.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupController : ControllerBase
+    public class GroupController : RestController<Group, GroupDto>, IGroupController
     {
-        private readonly UnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IGroupService _service;
 
-        public GroupController(UnitOfWork unitOfWork, IMapper mapper)
+        public GroupController(IGroupService service) : base(service)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _service = service;
         }
 
-        // GET: api/<ValuesController>
+        [NonAction]
+        public override async Task<IActionResult> Get(int id)
+        {
+            return await base.Get(id);
+        }
+
+        [NonAction]
+        public override async Task<IActionResult> Put(int id, GroupDto request)
+        {
+            return await base.Put(id, request);
+        }
+
+        [NonAction]
+        public override async Task<IActionResult> Delete(int id)
+        {
+            return await base.Delete(id);
+        }
+
         [HttpGet]
         [Authorize]
-        public IActionResult Get()
+        public override async Task<IActionResult> Get()
         {
             try
             {
-                int id = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-                var groups = _unitOfWork.GroupRepository.GetUserGroups(id).Select(x => _mapper.Map<GroupDetailsDto>(x));
-
-                return Ok(groups);
+                int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var response = _service.Get(userId);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                return InternalServerError();
             }
         }
 
-        // GET api/<ValuesController>/5
-        [HttpGet("{id}")]
+        [HttpGet("{groupName}")]
         [Authorize]
-        public IActionResult GetGroup(int id)
+        public async Task<IActionResult> Get(string groupName)
         {
             try
             {
-                int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-
-                Group group = _unitOfWork.GroupRepository.GetGroupDetails(id);
-
-                if (group == null)
-                {
-                    return BadRequest("Group Doesn't exist");
-                }
-
-                if (group.CreatorId != creatorId)
-                {
-                    return Unauthorized();
-                }
-
-                GroupMembersDto groupMembers = _mapper.Map<GroupMembersDto>(group);
-
-                return Ok(groupMembers);
+                int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var response = _service.Get(groupName, userId);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                return InternalServerError();
             }
         }
 
-        // POST api/<ValuesController>
         [HttpPost]
         [Authorize]
-        public IActionResult CreateGroup([FromBody] CreateGroupDto createGroup)
+        public override async Task<IActionResult> Post([FromBody] GroupDto request)
         {
             try
             {
-                Group group = _mapper.Map<Group>(createGroup);
-                group.CreatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-
-                if(_unitOfWork.GroupRepository.GetGroupWithName(group.CreatorId, group.Name) != null)
-                {
-                    return BadRequest("Group Already exists");
-                }
-
-                _unitOfWork.GroupRepository.Add(group);
-                _unitOfWork.Save();
-
-                GroupDetailsDto groupDetails = _mapper.Map<GroupDetailsDto>(group);
-
-                return Ok(groupDetails);
+                int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var response = _service.Add(userId, request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                return InternalServerError();
             }
         }
 
-        // POST api/<ValuesController>/member/10
-        [HttpPost("member/{id}")]
+        [HttpPut("{groupName}")]
         [Authorize]
-        public IActionResult AddMembers(int id, [FromBody] GroupMemberDto members)
-        {
-            using (var transaction = _unitOfWork.GetTransasction())
-            {
-                try
-                {
-                    int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-
-                    Group group = _unitOfWork.GroupRepository.Get(id);
-
-                    if (group == null)
-                    {
-                        return BadRequest("Group Doesn't exist");
-                    }
-
-                    if (group.CreatorId != creatorId)
-                    {
-                        return Unauthorized();
-                    }
-
-                    List<User> users = new List<User>();
-
-                    foreach (var email in members.Emails)
-                    {
-                        User user = _unitOfWork.UserRepository.GetUserByEmail(email);
-                        if (user == null)
-                        {
-                            return NotFound($"User with email {email} not found");
-                        }
-                        else if (user.Id == creatorId)
-                        {
-                            return BadRequest("Can't add group creator to group");
-                        }
-                        else
-                        {
-                            users.Add(user);
-                        }
-                    }
-
-                    foreach (var user in users)
-                    {
-                        _unitOfWork.GroupRepository.AddMembers(id, user);
-                    }
-                    _unitOfWork.Save();
-
-                    transaction.Commit();
-                    return Ok();
-                }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    Console.WriteLine(ex.Message);
-                    return StatusCode(500, "Internal Server Error");
-                }
-            }
-        }
-
-        // DELETE api/<ValuesController>/member/10
-        [HttpDelete("member/{id}/{email}")]
-        [Authorize]
-        public IActionResult RemoveMembers(int id, string email)
+        public async Task<IActionResult> Put(string groupName, [FromBody] GroupDto request)
         {
             try
             {
-                int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-
-                Group group = _unitOfWork.GroupRepository.Get(id);
-
-                if (group == null)
-                {
-                    return BadRequest("Group Doesn't exist");
-                }
-
-                if (group.CreatorId != creatorId)
-                {
-                    return Unauthorized();
-                }
-
-                User user = _unitOfWork.UserRepository.GetUserByEmail(email);
-                
-                if (user == null)
-                {
-                    return NotFound("User not found");
-                }
-
-                if(user.Id == creatorId)
-                {
-                    return BadRequest("Can't remove group creator from group");  
-                }
-
-                _unitOfWork.GroupRepository.RemoveMembers(id, user);
-                _unitOfWork.Save();
-
-                return Ok();
+                int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var response = _service.Update(groupName, userId, request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                return InternalServerError();
             }
         }
 
-        // DELETE api/<ValuesController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{groupName}")]
         [Authorize]
-        public IActionResult DeleteGroup(int id)
+        public async Task<IActionResult> Delete(string groupName)
         {
             try
             {
-                int creatorId = int.Parse(this.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
-
-                Group group = _unitOfWork.GroupRepository.Get(id);
-
-                if (group == null)
-                {
-                    return BadRequest("Group Doesn't exist");
-                }
-
-                if(group.CreatorId != creatorId)
-                {
-                    return Unauthorized();
-                }
-
-                _unitOfWork.GroupRepository.Delete(group);
-                _unitOfWork.Save();
-
-                return Ok();
+                int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var response = _service.Delete(groupName, userId);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                return InternalServerError();
+            }
+        }
+
+        [HttpPost("add/{groupName}/{memberEmail}")]
+        [Authorize]
+        public async Task<IActionResult> AddMember(string groupName, string memberEmail)
+        {
+            try
+            {
+                int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var response = _service.AddMember(memberEmail, groupName, userId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return InternalServerError();
+            }
+        }
+
+        [HttpPost("remove/{groupName}/{memberEmail}")]
+        [Authorize]
+        public async Task<IActionResult> RemoveMember(string groupName, string memberEmail)
+        {
+            try
+            {
+                int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var response = _service.RemoveMember(memberEmail, groupName, userId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return InternalServerError();
             }
         }
     }

@@ -9,8 +9,5 @@ namespace assignment.Dto
         [MinLength(2, ErrorMessage = "Type should contain alteast 2 character")]
         [RegularExpression("^[A-Za-z]+(?: [A-Za-z]+)*$", ErrorMessage = "Use only Characters")]
         public string Type { get; set; }
-
-        [DefaultValue("getdate()")]
-        public DateTime CreatedAt { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace assignment.Services
             _repository = repository;
             _mapper = mapper;
         }
-
+        
         public virtual IEnumerable<TDto> Get()
         {
             IEnumerable<T> entities = _repository.Get();

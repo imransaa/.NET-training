@@ -1,5 +1,8 @@
-﻿using assignment.Dto;
+﻿using assignment.Controllers.Interfaces;
+using assignment.Dto;
+using assignment.Models;
 using assignment.Services.Interfaces;
+using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -10,13 +13,44 @@ namespace assignment.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : RestController<User, UserDto>, IUserController
     {
         private readonly IUserService _service;
 
-        public UserController(IUserService service)
+        public UserController(IUserService service) : base(service)
         {
             _service = service;
+        }
+
+        [NonAction]
+        public override async Task<IActionResult> Get()
+        {
+            return await base.Get();
+        }
+
+        [NonAction]
+        public override async Task<IActionResult> Get(int id)
+        {
+            return await base.Get(id);
+        }
+
+
+        [NonAction]
+        public override async Task<IActionResult> Post(UserDto request)
+        {
+            return await base.Post(request);
+        }
+
+        [NonAction]
+        public override async Task<IActionResult> Put(int id, UserDto request)
+        {
+            return await base.Put(id, request);
+        }
+
+        [NonAction]
+        public override async Task<IActionResult> Delete(int id)
+        {
+            return await base.Delete(id);
         }
 
         // POST api/<GroupController>/signin
@@ -31,7 +65,7 @@ namespace assignment.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                return InternalServerError();
             }
         }
 
@@ -47,7 +81,7 @@ namespace assignment.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                return InternalServerError();
             }
         }
 
@@ -56,17 +90,8 @@ namespace assignment.Controllers
         [Authorize]
         public async Task<IActionResult> Delete()
         {
-            try
-            {
-                int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var response = _service.Delete(userId);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
-            }
+            int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return await Delete(userId);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace assignment.Dto
 {
-    public class CreateGroupDto
+    public class GroupDto
     {
         [Required(ErrorMessage = "Name is a Required feild")]
         [MinLength(2, ErrorMessage = "Name should contain alteast 2 character")]
@@ -42,16 +42,11 @@ namespace assignment.Dto
 
     public class GroupMembersDto
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
 
         [Required(ErrorMessage = "Name is a Required feild")]
         [MinLength(2, ErrorMessage = "Name should contain alteast 2 character")]
         [RegularExpression("^[A-Za-z]+(?: [A-Za-z]+)*$", ErrorMessage = "Use only Characters")]
         public string Name { get; set; }
-
-        public DateTime CreatedAt { get; set; }
 
         public ICollection<GroupUserDto> Users { get; set; }
     }

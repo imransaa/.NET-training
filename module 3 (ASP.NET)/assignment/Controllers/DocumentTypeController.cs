@@ -1,6 +1,8 @@
-﻿using assignment.Data;
+﻿using assignment.Controllers.Interfaces;
+using assignment.Data;
 using assignment.Dto;
 using assignment.Models;
+using assignment.Services.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,87 +14,46 @@ namespace assignment.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DocumentTypeController : ControllerBase
+    public class DocumentTypeController : RestController<DocumentType, TypeDto>, IDocumentTypeController
     {
-        private UnitOfWork _unitOfWork;
-        private IMapper _mapper;
+        private readonly IDocumentTypeService _service;
 
-        public DocumentTypeController(UnitOfWork unitOfWork, IMapper mapper)
+        public DocumentTypeController(IDocumentTypeService service) : base(service)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _service = service;
         }
 
-        // GET: api/<DocumentTypeController>
-        [HttpGet]
-        [Authorize]
-        public IActionResult Get()
+        [NonAction]
+        public override async Task<IActionResult> Get(int id)
         {
-            try
-            {
-                var types = _unitOfWork.DocumentTypeRepository.Get();
-                var typeDto = _mapper.Map<IEnumerable<TypeDto>> (types);
-
-                return Ok(typeDto);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
-            }
+            return await base.Get(id);
         }
 
-        // POST api/<DocumentTypeController>
-        [HttpPost]
-        [Authorize]
-        public IActionResult Post([FromBody] TypeDto typeDto)
+        [NonAction]
+        public override async Task<IActionResult> Put(int id, TypeDto request)
         {
-            try
-            {
-                DocumentType type = _unitOfWork.DocumentTypeRepository.GetType(typeDto.Type);
-
-                if (type != null)
-                {
-                    return BadRequest("Document Type already exits");
-                }
-
-                type = _mapper.Map<DocumentType>(typeDto);
-
-                _unitOfWork.DocumentTypeRepository.Add(type);
-                _unitOfWork.Save();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
-            }
+            return await base.Put(id, request);
         }
 
-        // DELETE api/<DocumentTypeController>/5
+        [NonAction]
+        public override async Task<IActionResult> Delete(int id)
+        {
+            return await base.Delete(id);
+        }
+
         [HttpDelete("{typeName}")]
         [Authorize]
-        public IActionResult Delete([FromRoute]string typeName)
+        public async Task<IActionResult> Delete(string typeName)
         {
             try
             {
-                DocumentType type = _unitOfWork.DocumentTypeRepository.GetType(typeName);
-
-                if(type == null)
-                {
-                    return BadRequest("Document Type does not exit");
-                }
-
-                _unitOfWork.DocumentTypeRepository.Delete(type);
-                _unitOfWork.Save();
-
-                return Ok();
+                var response = _service.Delete(typeName);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal Server Error");
+                return InternalServerError();
             }
         }
     }

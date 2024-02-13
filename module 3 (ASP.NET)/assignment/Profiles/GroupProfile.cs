@@ -8,7 +8,8 @@ namespace assignment.Profiles
     {
         public GroupProfile()
         {
-            CreateMap<CreateGroupDto, Group>();
+            CreateMap<GroupDto, Group>();
+            CreateMap<Group, GroupDto>();
             CreateMap<Group, GroupDetailsDto>();
             CreateMap<Group, GroupMembersDto>();
         }
