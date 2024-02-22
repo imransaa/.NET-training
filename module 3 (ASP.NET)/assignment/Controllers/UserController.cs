@@ -91,7 +91,7 @@ namespace assignment.Controllers
         public async Task<IActionResult> Delete()
         {
             int userId = int.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            return await Delete(userId);
+            return await base.Delete(userId);
         }
     }
 }

@@ -6,7 +6,10 @@ using System.Text;
 using assignment.Data.Interfaces;
 using assignment.Services.Interfaces;
 using assignment.Services;
+using assignment.Middleware;
+using assignment.Filters;
 
+string MyCorsPolicy = "CORS Policy";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,6 +18,23 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(typeof(Program));
+
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add(new ExceptionFilter());
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(MyCorsPolicy,
+                          policy =>
+                          {
+                              policy
+                              .AllowAnyOrigin()
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                          });
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -61,7 +81,11 @@ app.MapControllers();
 
 app.UseHttpsRedirection();
 
+app.UseCors(MyCorsPolicy);
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseRequestLogger();
 
 app.Run();

@@ -27,7 +27,8 @@ namespace assignment.Dto
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Password is a Required feild")]
-        [MinLength(8, ErrorMessage = "Minimumm 8 Characters are required")]
+        [RegularExpression("^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[~!@#$%^&*()_+\\-=/*-+{}[\\]'\";:,.<>/?\\\\|])[a-zA-Z0-9~!@#$%^&*()_+\\-=/*-+{}[\\]'\";:,.<>/?\\\\|]+$", 
+            ErrorMessage = "Password should contain digits, capital letters, small letters and special characters")]
         public string Password { get; set; }
     }
 
