@@ -12,7 +12,7 @@ type Props = {
   Icon: any;
   hidePassword: boolean;
   onHidePasswordClick: any;
-  error: boolean;
+  isError: boolean;
   onSubmit: any;
   onRegister: any;
   loading: boolean;
@@ -46,7 +46,7 @@ const LoginUI = (props: Props) => {
       label: "Submit",
       type: "submit",
       onClick: props.onSubmit,
-      disabled: props.error,
+      disabled: props.isError,
     },
     {
       label: "Register",

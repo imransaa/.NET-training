@@ -1,5 +1,5 @@
 "use client";
-import userLogin from "@/api/userLogin";
+import { userLogin } from "@/api/userApis";
 import InputUtils from "@/utils/inputUtils";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -21,13 +21,7 @@ const LoginContainer = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const error =
-    inputError.email !== "" ||
-    inputError.password !== "" ||
-    input.email === "" ||
-    input.password === ""
-      ? true
-      : false;
+  const isError = hasInputError(input, inputError);
 
   useEffect(() => {
     checkErrors();
@@ -51,12 +45,8 @@ const LoginContainer = (props: Props) => {
     }));
   }
 
-  function onHidePasswordClick() {
-    setHidePassword((prevState) => !prevState);
-  }
-
   function onSubmit() {
-    if (!error) {
+    if (!isError) {
       setLoading(true);
       userLogin(input)
         .then((res) => {
@@ -72,10 +62,6 @@ const LoginContainer = (props: Props) => {
     }
   }
 
-  function onRegister() {
-    router.push("/register");
-  }
-
   return (
     <div>
       {
@@ -84,15 +70,24 @@ const LoginContainer = (props: Props) => {
           inputError={inputError}
           onInputChange={onInputChange}
           hidePassword={hidePassword}
-          onHidePasswordClick={onHidePasswordClick}
-          error={error}
+          onHidePasswordClick={() => setHidePassword((prevState) => !prevState)}
+          isError={isError}
           onSubmit={onSubmit}
-          onRegister={onRegister}
+          onRegister={() => router.push("/register")}
           loading={loading}
         />
       }
     </div>
   );
 };
+
+function hasInputError(input: any, inputError: any) {
+  return inputError.email !== "" ||
+    inputError.password !== "" ||
+    input.email === "" ||
+    input.password === ""
+    ? true
+    : false;
+}
 
 export default LoginContainer;

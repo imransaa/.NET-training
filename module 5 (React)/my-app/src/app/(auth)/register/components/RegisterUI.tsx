@@ -7,12 +7,12 @@ import Loading from "../../loading";
 type Props = {
   input: any;
   inputError: any;
-  error: boolean;
+  isError: boolean;
   onInputChange: any;
   hidePassword: any;
   hideReenterPassword: any;
   onHidePasswordClick: any;
-  onHideReenterasswordClick: any;
+  onHideReenterPasswordClick: any;
   onSubmit: any;
   onLogin: any;
   loading: boolean;
@@ -55,7 +55,7 @@ const RegisterUI = (props: Props) => {
       onChange: props.onInputChange,
       error: props.inputError.reenter_password,
       Icon: props.hideReenterPassword ? IoIosEye : IoIosEyeOff,
-      onIconClick: props.hideReenterPassword,
+      onIconClick: props.onHideReenterPasswordClick,
     },
   ];
 
@@ -63,7 +63,7 @@ const RegisterUI = (props: Props) => {
     {
       label: "Submit",
       onClick: props.onSubmit,
-      disabled: props.error,
+      disabled: props.isError,
     },
     {
       label: "Login",

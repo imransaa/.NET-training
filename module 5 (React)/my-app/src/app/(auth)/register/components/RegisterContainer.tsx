@@ -1,3 +1,4 @@
+import { userSignup } from "@/api/userApis";
 import InputUtils from "@/utils/inputUtils";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -22,17 +23,9 @@ const RegisterContainer = (props: Props) => {
   const [hideReenterPassword, setHideReenterPassword] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
+  const isError = hasInputError(input, inputError);
 
-  const error =
-    inputError.email !== "" ||
-    inputError.password !== "" ||
-    input.email === "" ||
-    input.password === "" ||
-    input.reenter_password === "" ||
-    input.name == ""
-      ? true
-      : false;
+  const router = useRouter();
 
   useEffect(() => {
     checkErrors();
@@ -48,14 +41,10 @@ const RegisterContainer = (props: Props) => {
   function checkErrors() {
     let emailErrors = InputUtils.checkEmailError(input.email);
     let passwordErrors = InputUtils.checkPasswordError(input.password);
-    let reenter_passwordErrors = "";
-
-    if (
-      input.reenter_password !== "" &&
-      input.password !== input.reenter_password
-    ) {
-      reenter_passwordErrors = "Passwords dont match.";
-    }
+    let reenter_passwordErrors =
+      input.reenter_password !== "" && input.password !== input.reenter_password
+        ? "Passwords dont match."
+        : "";
 
     setInputError((prevErrors) => ({
       ...prevErrors,
@@ -65,34 +54,28 @@ const RegisterContainer = (props: Props) => {
     }));
   }
 
-  function onHidePasswordClick() {
-    setHidePassword((prevState) => !prevState);
-  }
-
-  function onHideReenterPasswordClick() {
-    setHideReenterPassword((prevState) => !prevState);
-  }
-
   function onSubmit() {
-    if (!error) {
-      //   setLoading(true);
-      //   userLogin(input)
-      //     .then((res) => {
-      //       if (res?.token) {
-      //         alert("Succesfully registered in");
-      //         console.log(res.token);
-      //       } else {
-      //         alert("Invalid Credentials");
-      //       }
-      //     })
-      //     .catch((err) => alert("Invalid Credentials."))
-      //     .finally(() => setLoading(false));
-      router.push("/");
-    }
-  }
+    const signupData = {
+      name: input.name,
+      email: input.email,
+      password: input.password,
+    };
 
-  function onLogin() {
-    router.push("/");
+    if (!isError) {
+      setLoading(true);
+      userSignup(signupData)
+        .then((res) => {
+          if (res?.name && res?.email) {
+            alert("Succesfully registered");
+            setLoading(false);
+            router.push("/");
+          } else {
+            alert("Error while signing up");
+          }
+        })
+        .catch((err) => alert("Error while signing up"))
+        .finally(() => setLoading(false));
+    }
   }
 
   return (
@@ -101,19 +84,32 @@ const RegisterContainer = (props: Props) => {
         <props.Render
           input={input}
           inputError={inputError}
-          error={error}
+          isError={isError}
           onInputChange={onInputChange}
           hidePassword={hidePassword}
           hideReenterPassword={hideReenterPassword}
-          onHidePasswordClick={onHidePasswordClick}
-          onHideReenterasswordClick={onHideReenterPasswordClick}
+          onHidePasswordClick={() => setHidePassword((prevState) => !prevState)}
+          onHideReenterPasswordClick={() =>
+            setHideReenterPassword((prevState) => !prevState)
+          }
           onSubmit={onSubmit}
-          onLogin={onLogin}
+          onLogin={() => router.push("/")}
           loading={loading}
         />
       }
     </div>
   );
 };
+
+function hasInputError(input: any, inputError: any) {
+  return inputError.email !== "" ||
+    inputError.password !== "" ||
+    input.email === "" ||
+    input.password === "" ||
+    input.reenter_password === "" ||
+    input.name == ""
+    ? true
+    : false;
+}
 
 export default RegisterContainer;
