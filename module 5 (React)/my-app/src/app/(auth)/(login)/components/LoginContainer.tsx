@@ -19,6 +19,7 @@ const LoginContainer = (props: Props) => {
   });
   const [hidePassword, setHidePassword] = useState(true);
   const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   const isError = hasInputError(input, inputError);
@@ -51,8 +52,8 @@ const LoginContainer = (props: Props) => {
       userLogin(input)
         .then((res) => {
           if (res?.token) {
-            alert("Succesfully logged in");
-            console.log(res.token);
+            localStorage.setItem("token", res.token);
+            router.push("/group");
           } else {
             alert("Invalid Credentials");
           }

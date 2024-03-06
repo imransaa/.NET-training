@@ -31,7 +31,7 @@ const LoginUI = (props: Props) => {
     },
     {
       label: "Password",
-      type: "password",
+      type: props.hidePassword ? "password" : "text",
       name: "password",
       value: props.input.password,
       onChange: props.onInputChange,
