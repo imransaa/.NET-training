@@ -12,4 +12,15 @@ const onPostRequest = async (url: string, data: any, headers: any = {}) => {
   }).then((res) => res.json());
 };
 
-export { baseUrl, onPostRequest };
+const onGetRequest = async (url: string, headers: any = {}) => {
+  return await fetch(baseUrl + url, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      ...headers,
+    },
+  }).then((res) => res.json());
+};
+
+export { baseUrl, onPostRequest, onGetRequest };

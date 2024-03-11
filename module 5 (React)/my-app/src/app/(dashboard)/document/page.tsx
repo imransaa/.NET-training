@@ -1,16 +1,22 @@
+"use client";
 import React from "react";
-import DocumentsUI from "./components/DocumentsUI";
+import { getDocTypes, getDocs } from "@/api/documentApis";
+import { useRouter } from "next/navigation";
+import DocumentsContainer from "./components/DocumentsContainer";
 
-type Props = {};
+const Page = async () => {
+  const router = useRouter();
+  const token: string = localStorage.getItem("token") || "";
+  const docTypes = await getDocTypes(token).catch((err) => {
+    console.log(err);
+    router.back();
+  });
+  // const documents = await getDocs(token).catch((err) => {
+  //   console.log(err);
+  //   router.back();
+  // });
 
-const Documents = (props: Props) => {
-  const docs = [
-    { name: "Developer Trainees" },
-    { name: ".Net Roadmap" },
-    { name: "Java Roadmap" },
-  ];
-
-  return <DocumentsUI documents={docs} />;
+  return <DocumentsContainer docTypes={docTypes} />;
 };
 
-export default Documents;
+export default Page;

@@ -1,24 +1,24 @@
 "use client";
 import React, { useState } from "react";
-import GroupsUI from "./components/GroupsUI";
+import DocumentsUI from "./DocumentsUI";
 
 type Props = {
   docTypes: any[];
 };
 
-const Groups = (props: Props) => {
+const DocumentsContainer = (props: Props) => {
   const [hideModal, setHideModal] = useState({
     edit: true,
     create: true,
     delete: true,
   });
 
-  const [group, setGroup] = useState({ id: 0, name: "" });
+  const [document, setDocument] = useState({ id: 0, name: "", type: "" });
 
-  const groups = [
-    { id: 1, name: "trainees" },
-    { id: 2, name: ".Net Developers" },
-    { id: 3, name: "Java Developers" },
+  const docs = [
+    { id: 0, name: "Developer Trainees", type: "spreadsheet" },
+    { id: 1, name: ".Net Roadmap", type: "doc" },
+    { id: 2, name: "Java Roadmap", type: "doc" },
   ];
 
   function onModalClose() {
@@ -30,7 +30,7 @@ const Groups = (props: Props) => {
   }
 
   function onShowCreateModal() {
-    setGroup({ id: 0, name: "" });
+    setDocument({ id: 0, name: "", type: "" });
     setHideModal({
       edit: true,
       create: false,
@@ -39,7 +39,7 @@ const Groups = (props: Props) => {
   }
 
   function onShowEditModal(index: number) {
-    setGroup(groups[index]);
+    setDocument(docs[index]);
     setHideModal({
       edit: false,
       create: true,
@@ -48,7 +48,7 @@ const Groups = (props: Props) => {
   }
 
   function onShowDeleteModal(index: number) {
-    setGroup(groups[index]);
+    setDocument(docs[index]);
     setHideModal({
       edit: true,
       create: true,
@@ -57,17 +57,18 @@ const Groups = (props: Props) => {
   }
 
   function onModalInputChange(e: any) {
-    setGroup((prevGroup) => ({
+    setDocument((prevGroup) => ({
       ...prevGroup,
       [e.target.name]: e.target.value,
     }));
   }
 
   return (
-    <GroupsUI
-      groups={groups}
+    <DocumentsUI
+      documents={docs}
+      docTypes={props.docTypes}
       hideModal={hideModal}
-      group={group}
+      document={document}
       onModalInputChange={onModalInputChange}
       onShowCreateModal={onShowCreateModal}
       onShowEditModal={onShowEditModal}
@@ -77,4 +78,4 @@ const Groups = (props: Props) => {
   );
 };
 
-export default Groups;
+export default DocumentsContainer;

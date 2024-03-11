@@ -3,10 +3,16 @@ import Button from "@/components/Button";
 import { IoMdAdd } from "react-icons/io";
 import React from "react";
 import Modal from "@/components/Modal";
+import GroupModal from "./GroupModal";
+import Input from "@/components/Input";
+import { group } from "console";
+import DisplayGroups from "./DisplayGroups";
 
 type Props = {
   groups: any[];
   hideModal: any;
+  group: any;
+  onModalInputChange: any;
   onShowEditModal: any;
   onShowDeleteModal: any;
   onShowCreateModal: any;
@@ -27,32 +33,19 @@ const GroupsUI = (props: Props) => {
         </button>
       </div>
       <hr className="w-full bg-black/50 my-5" />
-      <div className="w-full">
-        <div className="divide-y divide-solid">
-          {props.groups.map((group: any, index: number) => {
-            return (
-              <div key={index} className="py-4 flex gap-2">
-                <p className="text-lg mr-auto">{group.name}</p>
-                <Button label="Edit" onClick={props.onShowEditModal} />
-                <Button label="Delete" onClick={props.onShowDeleteModal} />
-              </div>
-            );
-          })}
-        </div>
-      </div>
 
-      <Modal
-        hide={
-          props.hideModal.edit &&
-          props.hideModal.delete &&
-          props.hideModal.create
-        }
-        onClose={props.onModalClose}
-      >
-        {!props.hideModal.edit && <p>Edit</p>}
-        {!props.hideModal.delete && <p>Delete</p>}
-        {!props.hideModal.create && <p>Create</p>}
-      </Modal>
+      <DisplayGroups
+        groups={props.groups}
+        onShowEditModal={props.onShowEditModal}
+        onShowDeleteModal={props.onShowDeleteModal}
+      />
+
+      <GroupModal
+        group={props.group}
+        hideModal={props.hideModal}
+        onModalClose={props.onModalClose}
+        onModalInputChange={props.onModalInputChange}
+      />
     </div>
   );
 };

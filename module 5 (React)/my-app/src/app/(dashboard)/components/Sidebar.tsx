@@ -17,14 +17,14 @@ const Sidebar = (props: Props) => {
       name: "Groups",
       onOptionClick: () => {
         setSelected(0);
-        router.push("/group");
+        router.replace("/group");
       },
     },
     {
       name: "Documents",
       onOptionClick: () => {
         setSelected(1);
-        router.push("/document");
+        router.replace("/document");
       },
     },
   ];

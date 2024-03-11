@@ -8,9 +8,7 @@ export type ButtonProps = {
 };
 
 export default (props: ButtonProps) => {
-  let color = props.color
-    ? `hover:bg-${props.color} hover:border`
-    : "hover:bg-black";
+  let color = props.color ? `hover:bg-${props.color} hover:border` : "hover:bg-black";
 
   return (
     <button
