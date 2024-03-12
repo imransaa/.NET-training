@@ -1,13 +1,18 @@
 import Button from "@/components/Button";
+import {
+  openDeleteDocumentModal,
+  openEditDocumentModal,
+} from "@/lib/feature/documents/documents.slice";
+import { useAppDispatch } from "@/lib/hooks";
 import React from "react";
 
 type Props = {
   documents: any[];
-  onShowEditModal: any;
-  onShowDeleteModal: any;
 };
 
 const DisplayDocuments = (props: Props) => {
+  const dispatch = useAppDispatch();
+
   return (
     <div className="w-full">
       <div className="divide-y divide-solid">
@@ -17,11 +22,11 @@ const DisplayDocuments = (props: Props) => {
               <p className="text-lg mr-auto">{group.name}</p>
               <Button
                 label="Edit"
-                onClick={() => props.onShowEditModal(index)}
+                onClick={() => dispatch(openEditDocumentModal(group))}
               />
               <Button
                 label="Delete"
-                onClick={() => props.onShowDeleteModal(index)}
+                onClick={() => dispatch(openDeleteDocumentModal(group))}
               />
             </div>
           );

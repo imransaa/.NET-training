@@ -3,6 +3,7 @@ import React from "react";
 import { getDocTypes, getDocs } from "@/api/documentApis";
 import { useRouter } from "next/navigation";
 import DocumentsContainer from "./components/DocumentsContainer";
+import StoreProvider from "@/app/StoreProvider";
 
 const Page = async () => {
   const router = useRouter();
@@ -11,12 +12,12 @@ const Page = async () => {
     console.log(err);
     router.back();
   });
-  // const documents = await getDocs(token).catch((err) => {
-  //   console.log(err);
-  //   router.back();
-  // });
 
-  return <DocumentsContainer docTypes={docTypes} />;
+  return (
+    <StoreProvider>
+      <DocumentsContainer docTypes={docTypes} />
+    </StoreProvider>
+  );
 };
 
 export default Page;

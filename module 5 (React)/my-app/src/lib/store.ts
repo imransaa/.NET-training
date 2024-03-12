@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import groupReducer from "./feature/groups/groups.slice";
+import documentReducer from "./feature/documents/documents.slice";
 
 const makeStore = () =>
   configureStore({
     reducer: {
       group: groupReducer,
+      document: documentReducer,
     },
   });
 
