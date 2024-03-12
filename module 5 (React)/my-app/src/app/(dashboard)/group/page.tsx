@@ -1,80 +1,21 @@
 "use client";
 import React, { useState } from "react";
-import GroupsUI from "./components/GroupsUI";
+import GroupsContainer from "./components/GroupsContainer";
+import { getGroups } from "@/api/groupApis";
+import { useRouter } from "next/navigation";
+import StoreProvider from "@/app/StoreProvider";
 
-type Props = {
-  docTypes: any[];
-};
+type Props = {};
 
-const Groups = (props: Props) => {
-  const [hideModal, setHideModal] = useState({
-    edit: true,
-    create: true,
-    delete: true,
-  });
-
-  const [group, setGroup] = useState({ id: 0, name: "" });
-
-  const groups = [
-    { id: 1, name: "trainees" },
-    { id: 2, name: ".Net Developers" },
-    { id: 3, name: "Java Developers" },
-  ];
-
-  function onModalClose() {
-    setHideModal({
-      edit: true,
-      create: true,
-      delete: true,
-    });
-  }
-
-  function onShowCreateModal() {
-    setGroup({ id: 0, name: "" });
-    setHideModal({
-      edit: true,
-      create: false,
-      delete: true,
-    });
-  }
-
-  function onShowEditModal(index: number) {
-    setGroup(groups[index]);
-    setHideModal({
-      edit: false,
-      create: true,
-      delete: true,
-    });
-  }
-
-  function onShowDeleteModal(index: number) {
-    setGroup(groups[index]);
-    setHideModal({
-      edit: true,
-      create: true,
-      delete: false,
-    });
-  }
-
-  function onModalInputChange(e: any) {
-    setGroup((prevGroup) => ({
-      ...prevGroup,
-      [e.target.name]: e.target.value,
-    }));
-  }
+const Page = async () => {
+  const router = useRouter();
+  const groups = await getGroups().catch((err) => router.back());
 
   return (
-    <GroupsUI
-      groups={groups}
-      hideModal={hideModal}
-      group={group}
-      onModalInputChange={onModalInputChange}
-      onShowCreateModal={onShowCreateModal}
-      onShowEditModal={onShowEditModal}
-      onShowDeleteModal={onShowDeleteModal}
-      onModalClose={onModalClose}
-    />
+    <StoreProvider>
+      <GroupsContainer groups={groups} />
+    </StoreProvider>
   );
 };
 
-export default Groups;
+export default Page;

@@ -1,13 +1,13 @@
-import { onGetRequest } from "./apiUtils";
+import { fetchRequest } from "./apiUtils";
 
 async function getDocTypes(token: string) {
-  return await onGetRequest("/api/DocumentType", {
+  return await fetchRequest("/api/DocumentType", {
     Authorization: `Bearer ${token}`,
   });
 }
 
 async function getDocs(token: string) {
-  return await onGetRequest("/api/Document", {
+  return await fetchRequest("/api/Document", {
     Authorization: `Bearer ${token}`,
   });
 }

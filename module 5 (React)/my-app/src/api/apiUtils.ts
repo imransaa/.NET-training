@@ -1,8 +1,13 @@
 const baseUrl = "https://localhost:7205";
 
-const onPostRequest = async (url: string, data: any, headers: any = {}) => {
+const apiRequest = async (
+  url: string,
+  data: any = {},
+  method: string = "POST",
+  headers: any = {}
+) => {
   return await fetch(baseUrl + url, {
-    method: "POST",
+    method: method,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -12,7 +17,7 @@ const onPostRequest = async (url: string, data: any, headers: any = {}) => {
   }).then((res) => res.json());
 };
 
-const onGetRequest = async (url: string, headers: any = {}) => {
+const fetchRequest = async (url: string, headers: any = {}) => {
   return await fetch(baseUrl + url, {
     method: "GET",
     headers: {
@@ -23,4 +28,4 @@ const onGetRequest = async (url: string, headers: any = {}) => {
   }).then((res) => res.json());
 };
 
-export { baseUrl, onPostRequest, onGetRequest };
+export { baseUrl, apiRequest, fetchRequest };

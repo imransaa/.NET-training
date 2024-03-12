@@ -1,13 +1,18 @@
 import Button from "@/components/Button";
+import {
+  openDeleteGroupModal,
+  openEditGroupModal,
+} from "@/lib/feature/groups/groups.slice";
+import { useAppDispatch } from "@/lib/hooks";
 import React from "react";
 
 type Props = {
   groups: any[];
-  onShowEditModal: any;
-  onShowDeleteModal: any;
 };
 
 const DisplayGroups = (props: Props) => {
+  const dispatch = useAppDispatch();
+
   return (
     <div className="w-full">
       <div className="divide-y divide-solid">
@@ -17,11 +22,11 @@ const DisplayGroups = (props: Props) => {
               <p className="text-lg mr-auto">{group.name}</p>
               <Button
                 label="Edit"
-                onClick={() => props.onShowEditModal(index)}
+                onClick={() => dispatch(openEditGroupModal(group.name))}
               />
               <Button
                 label="Delete"
-                onClick={() => props.onShowDeleteModal(index)}
+                onClick={() => dispatch(openDeleteGroupModal(group.name))}
               />
             </div>
           );
